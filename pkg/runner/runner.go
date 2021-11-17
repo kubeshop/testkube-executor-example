@@ -23,6 +23,7 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 	if err != nil {
 		return result, err
 	}
+	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
