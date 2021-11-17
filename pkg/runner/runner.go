@@ -1,6 +1,10 @@
 package runner
 
 import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/kubeshop/testkube/pkg/api/v1/testkube"
 )
 
@@ -12,9 +16,29 @@ func NewRunner() *ExampleRunner {
 type ExampleRunner struct {
 }
 
-func (r *ExampleRunner) Run(execution testkube.Execution) (testkube.ExecutionResult, error) {
-	return testkube.ExecutionResult{
-		Status: testkube.StatusPtr(testkube.SUCCESS_ExecutionStatus),
-		Output: "exmaple test output",
-	}, nil
+func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) {
+	// ScriptContent will have URI
+	uri := execution.ScriptContent
+	resp, err := http.Get(uri)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	// if get is successful return success result
+	if resp.StatusCode == 200 {
+		return testkube.ExecutionResult{
+			Status: testkube.ExecutionStatusSuccess,
+			Output: string(b),
+		}, nil
+	}
+
+	// else we'll return error to simplify example
+	err = fmt.Errorf("invalid status code %d, (uri:%s)", resp.StatusCode, uri)
+	return result.Err(err), nil
 }
