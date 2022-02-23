@@ -2,10 +2,14 @@ package runner
 
 import (
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/kubeshop/testkube/pkg/api/v1/testkube"
+	"github.com/kubeshop/testkube/pkg/executor/output"
 )
 
 func NewRunner() *ExampleRunner {
@@ -17,8 +21,34 @@ type ExampleRunner struct {
 }
 
 func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) {
-	// ScriptContent will have URI
-	uri := execution.ScriptContent
+
+	// Our test data will be simple string with url inside we can get it as execution.Content.Data
+	// but for more sophi
+
+	// execution.Content could have git repo data
+	// we're also passing content files/directories as mounted volume in directory
+	path := os.Getenv("RUNNER_DATADIR")
+
+	// let's print content of passed volume
+	output.PrintEvent("path:", path)
+	filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		d, err := ioutil.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		output.PrintEvent("- file: ", path, string(d))
+		return nil
+
+	})
+
+	output.PrintLog("some log message from executor")
+
+	// e.g. Cypress test is stored in Git repo so Testkube will checkout it automatically
+	// and allow you to use it easily
+	uri := execution.Content.Data
 	resp, err := http.Get(uri)
 	if err != nil {
 		return result, err
@@ -40,5 +70,9 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 
 	// else we'll return error to simplify example
 	err = fmt.Errorf("invalid status code %d, (uri:%s)", resp.StatusCode, uri)
+
+	// TODO remove - debug
+	// time.Sleep(time.Hour)
+
 	return result.Err(err), nil
 }

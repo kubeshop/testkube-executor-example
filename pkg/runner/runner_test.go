@@ -12,7 +12,7 @@ func TestRun(t *testing.T) {
 	t.Run("successful result", func(t *testing.T) {
 		runner := NewRunner()
 		res, err := runner.Run(testkube.Execution{
-			ScriptContent: "https://testkube.io",
+			Content: testkube.NewStringTestContent("https://testkube.io"),
 		})
 
 		assert.NoError(t, err)
@@ -22,7 +22,7 @@ func TestRun(t *testing.T) {
 	t.Run("failed 404 result", func(t *testing.T) {
 		runner := NewRunner()
 		res, err := runner.Run(testkube.Execution{
-			ScriptContent: "https://testkube.io/some-non-existing-uri-blablablabl",
+			Content: testkube.NewStringTestContent("https://testkube.io/some-non-existing-uri-blablablabl"),
 		})
 
 		assert.NoError(t, err)
@@ -33,7 +33,7 @@ func TestRun(t *testing.T) {
 	t.Run("network connection issues returns errors", func(t *testing.T) {
 		runner := NewRunner()
 		_, err := runner.Run(testkube.Execution{
-			ScriptContent: "blabla://non-existing-uri",
+			Content: testkube.NewStringTestContent("blabla://non-existing-uri"),
 		})
 
 		assert.Error(t, err)
