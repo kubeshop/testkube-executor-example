@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/kubeshop/testkube/pkg/api/v1/testkube"
 	"github.com/kubeshop/testkube/pkg/executor/output"
@@ -48,7 +50,7 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 
 	// e.g. Cypress test is stored in Git repo so Testkube will checkout it automatically
 	// and allow you to use it easily
-	uri := execution.Content.Data
+	uri := strings.TrimSuffix(execution.Content.Data, "\n") // newline on the end is not needed :)
 	resp, err := http.Get(uri)
 	if err != nil {
 		return result, err
@@ -60,6 +62,9 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 		return result, err
 	}
 
+	// TODO remove - debug
+	time.Sleep(time.Hour)
+
 	// if get is successful return success result
 	if resp.StatusCode == 200 {
 		return testkube.ExecutionResult{
@@ -70,9 +75,6 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 
 	// else we'll return error to simplify example
 	err = fmt.Errorf("invalid status code %d, (uri:%s)", resp.StatusCode, uri)
-
-	// TODO remove - debug
-	// time.Sleep(time.Hour)
 
 	return result.Err(err), nil
 }

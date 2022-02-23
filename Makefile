@@ -1,14 +1,17 @@
 .PHONY: test cover 
-NAME ?= template
+NAME ?= testkube-executor-example
 
 run: 
-	EXECUTOR_PORT=8082 go run cmd/agent/main.go
+	go run cmd/agent/main.go
 
 mongo-dev: 
 	docker run -p 27017:27017 mongo
 
 docker-build: 
-	docker build -t kubeshop/$(NAME)-runner -f build/agent/Dockerfile .
+	docker build --platform=linux/amd64 -t kubeshop/$(NAME):latest -f build/agent/Dockerfile .
+
+docker-push:
+	docker push kubeshop/$(NAME):latest
 
 install-swagger-codegen-mac: 
 	brew install swagger-codegen
