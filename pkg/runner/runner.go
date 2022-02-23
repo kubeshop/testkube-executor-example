@@ -50,7 +50,12 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 
 	// e.g. Cypress test is stored in Git repo so Testkube will checkout it automatically
 	// and allow you to use it easily
+	// we can create test like below:
+	// $ echo "http://google.pl" | kubectl testkube tests create --name example-google-test --type example/test
 	uri := strings.TrimSuffix(execution.Content.Data, "\n") // newline on the end is not needed :)
+
+	// other way to get data could be load it from Git e.g. file in git repo
+
 	resp, err := http.Get(uri)
 	if err != nil {
 		return result, err
