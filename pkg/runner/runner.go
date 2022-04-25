@@ -18,7 +18,11 @@ type ExampleRunner struct {
 
 func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) {
 	// ScriptContent will have URI
-	uri := execution.Content.Uri
+	uri := ""
+	if execution.Content != nil {
+		uri = execution.Content.Uri
+	}
+
 	resp, err := http.Get(uri)
 	if err != nil {
 		return result, err
