@@ -3,7 +3,7 @@ module github.com/kubeshop/testkube-executor-example
 go 1.18
 
 require (
-	github.com/kubeshop/testkube v1.0.9
+	github.com/kubeshop/testkube v1.0.14
 	github.com/stretchr/testify v1.7.0
 )
 
