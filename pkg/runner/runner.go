@@ -2,7 +2,7 @@ package runner
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/kubeshop/testkube/pkg/api/v1/testkube"
@@ -29,7 +29,7 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 	}
 	defer resp.Body.Close()
 
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return result, err
 	}
