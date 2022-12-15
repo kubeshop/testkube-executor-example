@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/kubeshop/testkube/pkg/api/v1/testkube"
+	"github.com/kubeshop/testkube/pkg/executor/runner"
 )
 
 func NewRunner() *ExampleRunner {
@@ -45,4 +46,9 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 	// else we'll return error to simplify example
 	err = fmt.Errorf("invalid status code %d, (uri:%s)", resp.StatusCode, uri)
 	return result.Err(err), nil
+}
+
+// GetType returns runner type
+func (r *ExampleRunner) GetType() runner.Type {
+	return runner.TypeMain
 }
