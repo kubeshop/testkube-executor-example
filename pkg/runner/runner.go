@@ -45,7 +45,7 @@ func (r *ExampleRunner) Run(execution testkube.Execution) (result testkube.Execu
 
 	// else we'll return error to simplify example
 	err = fmt.Errorf("invalid status code %d, (uri:%s)", resp.StatusCode, uri)
-	return result.Err(err), nil
+	return *result.Err(err), nil
 }
 
 // GetType returns runner type
